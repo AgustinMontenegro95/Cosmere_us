@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:avatar_glow/avatar_glow.dart';
+import 'package:cosmere_us/models/book_model.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,9 +40,27 @@ class _HomeState extends State<Home> {
   final GlobalKey _key2 = GlobalKey();
   final GlobalKey _key3 = GlobalKey();
 
-  void obtenerNotas() async {}
+  //List<Book> _listBook = book;
 
-  void obtenerLibros() async {}
+  void setBookPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Encode and store data in SharedPreferences
+    final String encodedData = Book.encode(book);
+    prefs.setString('book', encodedData);
+  }
+
+  void getBookPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Encode and store data in SharedPreferences
+    // Fetch and decode data
+    final String? bookString = prefs.getString('book');
+    if (bookString == null) {
+    } else {
+      setState(() {
+        book = Book.decode(bookString);
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -50,8 +69,7 @@ class _HomeState extends State<Home> {
         imageData = data;
       });
     });
-    //obtenerNotas();
-    //obtenerLibros();
+    getBookPreferences();
     _scrollController = ScrollController()
       ..addListener(() {
         setState(() {
@@ -606,6 +624,7 @@ class _HomeState extends State<Home> {
                 book[ind].status = value;
               });
               this.setState(() {});
+              setBookPreferences();
               /* // Obtain shared preferences.
               final prefs = await SharedPreferences.getInstance();
               await prefs.setBool('elantris', elantris!); */
@@ -636,6 +655,7 @@ class _HomeState extends State<Home> {
                           setState(() async {
                             /* final prefs = await SharedPreferences.getInstance();
                             await prefs.setString('elantrisNota', elantrisNota); */
+                            setBookPreferences();
                           });
                         },
                         items: <String>[

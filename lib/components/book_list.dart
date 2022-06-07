@@ -1,6 +1,6 @@
 import 'package:cosmere_us/models/book_model.dart';
 
-final List<Book> book = [
+List<Book> book = [
   //First picture
   Book(
       title: "Elantris",
