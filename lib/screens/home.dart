@@ -40,8 +40,6 @@ class _HomeState extends State<Home> {
   final GlobalKey _key2 = GlobalKey();
   final GlobalKey _key3 = GlobalKey();
 
-  //List<Book> _listBook = book;
-
   void setBookPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // Encode and store data in SharedPreferences
@@ -336,13 +334,12 @@ class _HomeState extends State<Home> {
           child: Stack(
             children: [
               Column(
-                // ignore: prefer_const_literals_to_create_immutables
-                children: [
-                  const Image(
+                children: const [
+                  Image(
                     image: AssetImage('assets/images/imagen_fondo.png'),
                     fit: BoxFit.contain,
                   ),
-                  const Image(
+                  Image(
                     image: AssetImage('assets/images/imagen_fondo2.png'),
                     fit: BoxFit.contain,
                   ),
@@ -422,51 +419,7 @@ class _HomeState extends State<Home> {
               bookCircle(19, 15.0, bottom: 285, left: 1),
               bookCircle(20, 20.0, bottom: 150, right: 37),
               bookCircle(21, 15.0, bottom: 70, left: 35),
-
-              //por salir
               bookCircle(22, 20.0, bottom: 215, left: 145),
-              /* Positioned(
-                bottom: 215,
-                left: 145,
-                child: AvatarGlow(
-                  endRadius: 60.0,
-                  child: Material(
-                    // Replace this child with your own
-                    elevation: 8.0,
-                    shape: const CircleBorder(),
-                    child: GestureDetector(
-                      onTap: () {
-                        showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (BuildContext context) {
-                              if (idioma) {
-                                return libroPorSalir(
-                                    "The lost metal",
-                                    "The Lost Metal is the final installment of the Wax and Wayne saga, marking the end of Era 2 and welcoming the Era 3 trilogy. It will be released on November 15, 2022.",
-                                    "theLostMetal.png");
-                              } else {
-                                return libroPorSalir(
-                                    "El metal perdido",
-                                    "El metal perdido es la última entrega de la saga de Wax y Wayne, que marca el final de la Era 2 y da la bienvenida a la trilogía de la Era 3. Saldrá a la venta el 15 de noviembre de 2022.",
-                                    "theLostMetal.png");
-                              }
-                            });
-                      },
-                      child: CircleAvatar(
-                        child: metalPerdido
-                            ? const Icon(Icons.check, color: Colors.white)
-                            : const Icon(Icons.timelapse_sharp,
-                                color: Colors.white),
-                        backgroundColor: metalPerdido
-                            ? Colors.green[300]
-                            : Colors.orange[300],
-                        radius: 20.0,
-                      ),
-                    ),
-                  ),
-                ),
-              ), */
               //Soludev
               Positioned(
                 bottom: 20,
@@ -625,9 +578,6 @@ class _HomeState extends State<Home> {
               });
               this.setState(() {});
               setBookPreferences();
-              /* // Obtain shared preferences.
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setBool('elantris', elantris!); */
             }),
         book[ind].status!
             ? Column(
