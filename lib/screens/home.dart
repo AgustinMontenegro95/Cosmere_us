@@ -1,13 +1,12 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:avatar_glow/avatar_glow.dart';
-import 'package:cosmere_us/models/book_model.dart';
+import 'package:cosmere_us/data/bloc/book_bloc.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
@@ -40,14 +39,14 @@ class _HomeState extends State<Home> {
   final GlobalKey _key2 = GlobalKey();
   final GlobalKey _key3 = GlobalKey();
 
-  void setBookPreferences() async {
+  /*  void setBookPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // Encode and store data in SharedPreferences
     final String encodedData = Book.encode(book);
     prefs.setString('book', encodedData);
-  }
+  } */
 
-  void getBookPreferences() async {
+  /* void getBookPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // Encode and store data in SharedPreferences
     // Fetch and decode data
@@ -58,7 +57,7 @@ class _HomeState extends State<Home> {
         book = Book.decode(bookString);
       });
     }
-  }
+  } */
 
   @override
   void initState() {
@@ -67,7 +66,7 @@ class _HomeState extends State<Home> {
         imageData = data;
       });
     });
-    getBookPreferences();
+    //getBookPreferences();
     _scrollController = ScrollController()
       ..addListener(() {
         setState(() {
@@ -329,134 +328,151 @@ class _HomeState extends State<Home> {
         ),
       ),
       backgroundColor: Colors.black,
-      body: SingleChildScrollView(
-          controller: _scrollController,
-          child: Stack(
-            children: [
-              Column(
-                children: const [
-                  Image(
-                    image: AssetImage('assets/images/imagen_fondo.png'),
-                    fit: BoxFit.contain,
-                  ),
-                  Image(
-                    image: AssetImage('assets/images/imagen_fondo2.png'),
-                    fit: BoxFit.contain,
-                  ),
-                ],
-              ),
-              // fechas amarillas
-              Positioned(
-                  key: _key2,
-                  top: 247,
-                  left: 257,
-                  child: const SizedBox(width: 20, height: 20)),
-              Positioned(
-                  key: _key3,
-                  top: 445,
-                  left: 195,
-                  child: const SizedBox(
-                    width: 20,
-                    height: 20,
-                  )),
-              bookCircle(0, 20,
-                  top: 70, left: 170, color: Colors.amber, key: key),
-              bookCircle(1, 15.0, top: 190, left: -10),
-              bookCircle(2, 15.0, top: 158, right: 3),
-              bookCircle(3, 15.0, top: 286, left: 65),
-              bookCircle(4, 20.0,
-                  top: 375,
-                  right: 60,
-                  color: const Color.fromARGB(255, 243, 166, 78)),
-              bookCircle(5, 20.0,
-                  top: 483,
-                  left: 19,
-                  color: const Color.fromARGB(255, 156, 95, 14)),
-              bookCircle(6, 15.0, top: 564, right: 22),
-              bookCircle(7, 20.0,
-                  top: 690,
-                  right: 160,
-                  color: const Color.fromARGB(255, 123, 144, 236)),
-              bookCircle(8, 20.0,
-                  top: 868,
-                  right: -12,
-                  color: const Color.fromARGB(255, 59, 211, 127)),
-              bookCircle(9, 20.0,
-                  top: 905,
-                  right: 185,
-                  color: const Color.fromARGB(255, 59, 211, 127)),
-              bookCircle(10, 20.0,
-                  top: 983,
-                  left: 1,
-                  color: const Color.fromARGB(255, 151, 103, 12)),
-              bookCircle(11, 15.0, top: 1071, right: 8),
-              //Segundo fondo---------------------------------------------------------
-              bookCircle(12, 20.0,
-                  bottom: 1000,
-                  left: 45,
-                  color: const Color.fromARGB(255, 42, 228, 228)),
-              bookCircle(13, 20.0,
-                  bottom: 860,
-                  right: 35,
-                  color: const Color.fromARGB(255, 233, 182, 14)),
-              bookCircle(14, 20.0,
-                  bottom: 750,
-                  left: 30,
-                  color: const Color.fromARGB(255, 207, 188, 18)),
-              bookCircle(15, 15.0, bottom: 683, left: 179),
-              bookCircle(16, 20.0,
-                  bottom: 567,
-                  left: 35,
-                  color: const Color.fromARGB(255, 155, 121, 12)),
-              bookCircle(17, 20.0,
-                  bottom: 565,
-                  right: 41,
-                  color: const Color.fromARGB(255, 18, 82, 219)),
-              bookCircle(18, 20.0,
-                  bottom: 405,
-                  right: 153,
-                  color: const Color.fromARGB(255, 48, 107, 235)),
-              bookCircle(19, 15.0, bottom: 285, left: 1),
-              bookCircle(20, 20.0, bottom: 150, right: 37),
-              bookCircle(21, 15.0, bottom: 70, left: 35),
-              bookCircle(22, 20.0, bottom: 215, left: 145),
-              //Soludev
-              Positioned(
-                bottom: 20,
-                left: 145,
-                child: Row(
+      body: BlocBuilder<BookBloc, BookState>(
+        builder: (context, state) {
+          if (state is BookLoadingState) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (state is BookLoadedState) {
+            return SingleChildScrollView(
+                controller: _scrollController,
+                child: Stack(
                   children: [
-                    const Icon(
-                      Icons.developer_mode_rounded,
-                      color: Colors.white,
-                      size: 25,
+                    Column(
+                      children: const [
+                        Image(
+                          image: AssetImage('assets/images/imagen_fondo.png'),
+                          fit: BoxFit.contain,
+                        ),
+                        Image(
+                          image: AssetImage('assets/images/imagen_fondo2.png'),
+                          fit: BoxFit.contain,
+                        ),
+                      ],
                     ),
-                    const Text(
-                      "Powered by: ",
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    SizedBox(
-                      width: 70,
-                      height: 70,
-                      child: GestureDetector(
-                        onTap: () async {
-                          const url = "https://soludevs.web.app/";
-                          if (await canLaunch(url)) {
-                            await launch(url);
-                          } else {
-                            throw "Could not launch $url";
-                          }
-                        },
-                        child: const Image(
-                            image: AssetImage(
-                                'assets/images/soludev_logo_mono.png')),
+                    // fechas amarillas
+                    Positioned(
+                        key: _key2,
+                        top: 247,
+                        left: 257,
+                        child: const SizedBox(width: 20, height: 20)),
+                    Positioned(
+                        key: _key3,
+                        top: 445,
+                        left: 195,
+                        child: const SizedBox(
+                          width: 20,
+                          height: 20,
+                        )),
+                    bookCircle(0, 20,
+                        top: 70, left: 170, color: Colors.amber, key: key),
+                    bookCircle(1, 15.0, top: 190, left: -10),
+                    bookCircle(2, 15.0, top: 158, right: 3),
+                    bookCircle(3, 15.0, top: 286, left: 65),
+                    bookCircle(4, 20.0,
+                        top: 375,
+                        right: 60,
+                        color: const Color.fromARGB(255, 243, 166, 78)),
+                    bookCircle(5, 20.0,
+                        top: 483,
+                        left: 19,
+                        color: const Color.fromARGB(255, 156, 95, 14)),
+                    bookCircle(6, 15.0, top: 564, right: 22),
+                    bookCircle(7, 20.0,
+                        top: 690,
+                        right: 160,
+                        color: const Color.fromARGB(255, 123, 144, 236)),
+                    bookCircle(8, 20.0,
+                        top: 868,
+                        right: -12,
+                        color: const Color.fromARGB(255, 59, 211, 127)),
+                    bookCircle(9, 20.0,
+                        top: 905,
+                        right: 185,
+                        color: const Color.fromARGB(255, 59, 211, 127)),
+                    bookCircle(10, 20.0,
+                        top: 983,
+                        left: 1,
+                        color: const Color.fromARGB(255, 151, 103, 12)),
+                    bookCircle(11, 15.0, top: 1071, right: 8),
+                    //Segundo fondo---------------------------------------------------------
+                    bookCircle(12, 20.0,
+                        bottom: 1000,
+                        left: 45,
+                        color: const Color.fromARGB(255, 42, 228, 228)),
+                    bookCircle(13, 20.0,
+                        bottom: 860,
+                        right: 35,
+                        color: const Color.fromARGB(255, 233, 182, 14)),
+                    bookCircle(14, 20.0,
+                        bottom: 750,
+                        left: 30,
+                        color: const Color.fromARGB(255, 207, 188, 18)),
+                    bookCircle(15, 15.0, bottom: 683, left: 179),
+                    bookCircle(16, 20.0,
+                        bottom: 567,
+                        left: 35,
+                        color: const Color.fromARGB(255, 155, 121, 12)),
+                    bookCircle(17, 20.0,
+                        bottom: 565,
+                        right: 41,
+                        color: const Color.fromARGB(255, 18, 82, 219)),
+                    bookCircle(18, 20.0,
+                        bottom: 405,
+                        right: 153,
+                        color: const Color.fromARGB(255, 48, 107, 235)),
+                    bookCircle(19, 15.0, bottom: 285, left: 1),
+                    bookCircle(20, 20.0, bottom: 150, right: 37),
+                    bookCircle(21, 15.0, bottom: 70, left: 35),
+                    bookCircle(22, 20.0, bottom: 215, left: 145),
+                    //Soludev
+                    Positioned(
+                      bottom: 20,
+                      left: 145,
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.developer_mode_rounded,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                          const Text(
+                            "Powered by: ",
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                          SizedBox(
+                            width: 70,
+                            height: 70,
+                            child: GestureDetector(
+                              onTap: () async {
+                                const url = "https://soludevs.web.app/";
+                                if (await canLaunch(url)) {
+                                  await launch(url);
+                                } else {
+                                  throw "Could not launch $url";
+                                }
+                              },
+                              child: const Image(
+                                  image: AssetImage(
+                                      'assets/images/soludev_logo_mono.png')),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
-                ),
-              ),
-            ],
-          )),
+                ));
+          }
+          if (state is BookErrorState) {
+            return Center(
+              child: Text(state.error.toString()),
+            );
+          }
+          return Container();
+        },
+      ),
       floatingActionButton: _showBackToTopButton == false
           ? null
           : FloatingActionButton(
@@ -572,12 +588,12 @@ class _HomeState extends State<Home> {
               book[ind].status! ? "Completed" : "Pending",
               style: const TextStyle(fontSize: 24, color: Colors.white),
             ),
-            onChanged: (value) async {
-              setState(() {
-                book[ind].status = value;
-              });
-              this.setState(() {});
-              setBookPreferences();
+            onChanged: (value) {
+              //book[ind].status = value;
+              BlocProvider.of<BookBloc>(context).add(
+                ChangeStatusBookEvent(value!, ind),
+              );
+              //setBookPreferences();
             }),
         book[ind].status!
             ? Column(
@@ -599,14 +615,17 @@ class _HomeState extends State<Home> {
                           color: Colors.grey[200],
                         ),
                         onChanged: (String? newValue) {
-                          setState(() {
+                          /* setState(() {
                             book[ind].rate = newValue.toString();
                           });
                           setState(() async {
                             /* final prefs = await SharedPreferences.getInstance();
                             await prefs.setString('elantrisNota', elantrisNota); */
                             setBookPreferences();
-                          });
+                          }); */
+                          BlocProvider.of<BookBloc>(context).add(
+                            ChangeRateBookEvent(newValue!, ind),
+                          );
                         },
                         items: <String>[
                           '0',
