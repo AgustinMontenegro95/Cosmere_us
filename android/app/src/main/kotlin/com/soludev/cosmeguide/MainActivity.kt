@@ -1,4 +1,4 @@
-package com.example.cosmere_us
+package com.soludev.cosmeguide
 
 import io.flutter.embedding.android.FlutterActivity
 

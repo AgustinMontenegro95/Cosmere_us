@@ -39,26 +39,6 @@ class _HomeState extends State<Home> {
   final GlobalKey _key2 = GlobalKey();
   final GlobalKey _key3 = GlobalKey();
 
-  /*  void setBookPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    // Encode and store data in SharedPreferences
-    final String encodedData = Book.encode(book);
-    prefs.setString('book', encodedData);
-  } */
-
-  /* void getBookPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    // Encode and store data in SharedPreferences
-    // Fetch and decode data
-    final String? bookString = prefs.getString('book');
-    if (bookString == null) {
-    } else {
-      setState(() {
-        book = Book.decode(bookString);
-      });
-    }
-  } */
-
   @override
   void initState() {
     rootBundle.load('assets/images/compartir.png').then((data) {
@@ -66,7 +46,6 @@ class _HomeState extends State<Home> {
         imageData = data;
       });
     });
-    //getBookPreferences();
     _scrollController = ScrollController()
       ..addListener(() {
         setState(() {
@@ -84,7 +63,6 @@ class _HomeState extends State<Home> {
 
   void tutorial() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     if (prefs.getBool('tutorial') == null) {
       WidgetsBinding.instance!.addPostFrameCallback(_layout);
     }
@@ -367,7 +345,7 @@ class _HomeState extends State<Home> {
                           height: 20,
                         )),
                     bookCircle(0, 20,
-                        top: 70, left: 170, color: Colors.amber, key: key),
+                        top: 70, left: 170, color: Colors.amber, key: _key1),
                     bookCircle(1, 15.0, top: 190, left: -10),
                     bookCircle(2, 15.0, top: 158, right: 3),
                     bookCircle(3, 15.0, top: 286, left: 65),
@@ -593,6 +571,7 @@ class _HomeState extends State<Home> {
               BlocProvider.of<BookBloc>(context).add(
                 ChangeStatusBookEvent(value!, ind),
               );
+              setState(() {});
               //setBookPreferences();
             }),
         book[ind].status!
@@ -615,17 +594,10 @@ class _HomeState extends State<Home> {
                           color: Colors.grey[200],
                         ),
                         onChanged: (String? newValue) {
-                          /* setState(() {
-                            book[ind].rate = newValue.toString();
-                          });
-                          setState(() async {
-                            /* final prefs = await SharedPreferences.getInstance();
-                            await prefs.setString('elantrisNota', elantrisNota); */
-                            setBookPreferences();
-                          }); */
                           BlocProvider.of<BookBloc>(context).add(
                             ChangeRateBookEvent(newValue!, ind),
                           );
+                          setState(() {});
                         },
                         items: <String>[
                           '0',
